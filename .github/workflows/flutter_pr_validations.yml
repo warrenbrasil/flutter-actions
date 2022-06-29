@@ -1,4 +1,4 @@
-name: Flutter pull request validation
+name: Flutter pull request validations
 
 on: 
   workflow_call:
