@@ -85,6 +85,6 @@ jobs:
           touch sample/.env
           flutter pub get && flutter pub get sample/
       - name: "Flutter Test"
-        run: flutter test .
+        run: flutter test --update-goldens .
         env:
           GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
