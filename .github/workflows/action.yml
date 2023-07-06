@@ -11,11 +11,26 @@ jobs:
         with:
           configuration-path: '.github/auto_assign.yml' # Only needed if you use something other than .github/auto_assign.yml
 
+  # milestone:
+  #   name: Pull Request Milestone
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: iyu/actions-milestone@v1
+  #       with:
+  #         repo-token: "${{ secrets.GITHUB_TOKEN }}"
+  #         configuration-path: .github/milestone.yml
+
   milestone:
-    name: Pull Request Milestone
     runs-on: ubuntu-latest
     steps:
-      - uses: iyu/actions-milestone@v1
+      - uses: octokit/request-action@v2.x
+        name: Check PR Demilestoned
+        if: github.event_name == 'issues' && github.event.action == 'demilestoned' && github.event.issue.pull_request != null && fromJson(steps.get_issue.outputs.data).milestone == null
         with:
-          repo-token: "${{ secrets.GITHUB_TOKEN }}"
-          configuration-path: .github/milestone.yml
+          # route: POST /repos/:repository/pulls/:pull_number/reviews
+          repository: ${{ github.repository }}
+          pull_number: ${{ github.event.issue.number }}
+          event: "COMMENT"
+          body: "PR must have milestone"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
