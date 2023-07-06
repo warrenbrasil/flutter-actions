@@ -21,13 +21,11 @@ jobs:
   #         configuration-path: .github/milestone.yml
 
   milestone:
+    if: github.event.pull_request.milestone == null
+    name: Check PR Milestone
     runs-on: ubuntu-latest
     steps:
-      - uses: octokit/request-action@v2.x
-        name: Check PR Demilestoned
-        if: github.event.pull_request.milestone == null
+      - name: Check for milestone
         run: |
           echo "Pull request has NO milestone"
           exit 1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
