@@ -25,11 +25,11 @@ jobs:
     steps:
       - uses: octokit/request-action@v2.x
         name: Check PR Demilestoned
-        if: github.event_name == 'issues' && github.event.action == 'demilestoned' && github.event.issue.pull_request != null && fromJson(steps.get_issue.outputs.data).milestone == null
+        if: github.event.pull_request.milestone == null
         with:
           # route: POST /repos/:repository/pulls/:pull_number/reviews
-          repository: ${{ github.repository }}
-          pull_number: ${{ github.event.issue.number }}
+          # repository: ${{ github.repository }}
+          # pull_number: ${{ github.event.issue.number }}
           event: "COMMENT"
           body: "PR must have milestone"
         env:
