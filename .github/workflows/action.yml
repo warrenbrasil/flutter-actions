@@ -26,11 +26,8 @@ jobs:
       - uses: octokit/request-action@v2.x
         name: Check PR Demilestoned
         if: github.event.pull_request.milestone == null
-        with:
-          # route: POST /repos/:repository/pulls/:pull_number/reviews
-          # repository: ${{ github.repository }}
-          # pull_number: ${{ github.event.issue.number }}
-          event: "COMMENT"
-          body: "PR must have milestone"
+        run: |
+          echo "Pull request has NO milestone"
+          exit 1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
