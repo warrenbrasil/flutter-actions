@@ -18,20 +18,25 @@ jobs:
 
     steps:
     - name: Verificar Milestone
-      uses: actions/github-script@v4
-      with:
-        script: |
-          const gh = require("@actions/github");
-          const octokit = gh.getOctokit(process.env.GITHUB_TOKEN);
+      run: |
+        npm install @octokit/rest@18.0.0
+        node - <<EOF
+          const { Octokit } = require("@octokit/rest");
+          const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
 
-          const { data: milestones } = await octokit.rest.issues.listMilestones({
+          octokit.issues.listMilestones({
             owner: "${{ github.repository_owner }}",
             repo: "${{ github.repository }}",
             state: "open"
+          })
+          .then(({ data: milestones }) => {
+            if (milestones.length > 0) {
+              console.log("Existe pelo menos uma milestone definida.");
+            } else {
+              console.log("Nenhuma milestone definida.");
+            }
+          })
+          .catch((error) => {
+            console.error("Ocorreu um erro ao buscar as milestones:", error);
           });
-
-          if (milestones.length > 0) {
-            console.log("Existe pelo menos uma milestone definida.");
-          } else {
-            console.log("Nenhuma milestone definida.");
-          }
+        EOF
