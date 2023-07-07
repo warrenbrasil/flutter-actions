@@ -19,24 +19,8 @@ jobs:
     steps:
     - name: Verificar Milestone
       run: |
-        npm install @octokit/rest@18.0.0
-        node - <<EOF
-          const { Octokit } = require("@octokit/rest");
-          const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
-
-          octokit.issues.listMilestones({
-            owner: "${{ github.repository_owner }}",
-            repo: "${{ github.repository }}",
-            state: "open"
-          })
-          .then(({ data: milestones }) => {
-            if (milestones.length > 0) {
-              console.log("Existe pelo menos uma milestone definida.");
-            } else {
-              console.log("Nenhuma milestone definida.");
-            }
-          })
-          .catch((error) => {
-            console.error("Ocorreu um erro ao buscar as milestones:", error);
-          });
-        EOF
+        curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+          "https://api.github.com/repos/${{ github.repository }}/milestones" \
+          | grep -q "\"title\":" \
+          && echo "Existe pelo menos uma milestone definida." \
+          || echo "Nenhuma milestone definida."
