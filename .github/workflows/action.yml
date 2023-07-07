@@ -24,15 +24,19 @@ jobs:
           const { Octokit } = require("@octokit/rest");
           const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
 
-          const { data: milestones } = await octokit.request('GET /repos/{owner}/{repo}/milestones', {
+          octokit.request('GET /repos/{owner}/{repo}/milestones', {
             owner: "${{ github.repository_owner }}",
             repo: "${{ github.repository }}",
             state: "open"
+          })
+          .then(({ data: milestones }) => {
+            if (milestones.length > 0) {
+              console.log("Existe pelo menos uma milestone definida.");
+            } else {
+              console.log("Nenhuma milestone definida.");
+            }
+          })
+          .catch((error) => {
+            console.error("Ocorreu um erro ao buscar as milestones:", error);
           });
-
-          if (milestones.length > 0) {
-            console.log("Existe pelo menos uma milestone definida.");
-          } else {
-            console.log("Nenhuma milestone definida.");
-          }
         EOF
