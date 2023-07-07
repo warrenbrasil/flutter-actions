@@ -15,21 +15,21 @@ jobs:
 
   check-milestone:
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Verificar Milestone
       uses: actions/github-script@v4
       with:
         script: |
-          const { Octokit } = require("@octokit/core");
-          const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
-          
-          const { data: milestones } = await octokit.request('GET /repos/{owner}/{repo}/milestones', {
-            owner: "${{ github.repository_owner }}",
-            repo: "${{ github.repository }}",
+          const github = require("@actions/github");
+          const octokit = github.getOctokit(process.env.GITHUB_TOKEN);
+
+          const { data: milestones } = await octokit.rest.issues.listMilestones({
+            owner: "${{ github.context.repo.owner }}",
+            repo: "${{ github.context.repo.repo }}",
             state: "open"
           });
-          
+
           if (milestones.length > 0) {
             console.log("Existe pelo menos uma milestone definida.");
           } else {
