@@ -30,13 +30,19 @@ jobs:
             state: "open"
           })
           .then(({ data: milestones }) => {
-            if (milestones && milestones.length > 0) {
+            if (Array.isArray(milestones) && milestones.length > 0) {
               console.log("Existe pelo menos uma milestone definida.");
+            } else if (Array.isArray(milestones) && milestones.length === 0) {
+              console.log("Nenhuma milestone definida.");
             } else {
-              console.log("Nenhuma milestone definida ou a funcionalidade de milestones não está habilitada.");
+              console.log("A funcionalidade de milestones pode não estar habilitada para este repositório.");
             }
           })
           .catch((error) => {
-            console.error("Ocorreu um erro ao buscar as milestones:", error.message);
+            if (error.status === 404) {
+              console.log("A funcionalidade de milestones pode não estar habilitada para este repositório.");
+            } else {
+              console.error("Ocorreu um erro ao buscar as milestones:", error.message);
+            }
           });
         EOF
