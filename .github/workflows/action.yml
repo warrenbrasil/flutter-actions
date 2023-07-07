@@ -21,13 +21,10 @@ jobs:
       uses: actions/github-script@v4
       with:
         script: |
-          const octokit = require("@octokit/rest")();
-          octokit.authenticate({
-            type: "token",
-            token: "${{ secrets.GITHUB_TOKEN }}"
-          });
+          const { Octokit } = require("@octokit/core");
+          const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
           
-          const { data: milestones } = await octokit.issues.listMilestonesForRepo({
+          const { data: milestones } = await octokit.request('GET /repos/{owner}/{repo}/milestones', {
             owner: "${{ github.repository_owner }}",
             repo: "${{ github.repository }}",
             state: "open"
