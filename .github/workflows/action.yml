@@ -4,28 +4,37 @@ on:
     types: [opened, ready_for_review, milestone]
 
 jobs:
-  add-reviews:
+  add-assigner:
     runs-on: ubuntu-latest
     steps:
-      - uses: kentaro-m/auto-assign-action@v1.2.5
+      - name: Auto-preencher assigner
+        uses: kentaro-m/auto-assign-action@v1.2.5
         with:
           configuration-path: '.github/auto_assign.yml' # Only needed if you use something other than .github/auto_assign.yml
 
-  # milestone:
-  #   name: Pull Request Milestone
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: iyu/actions-milestone@v1
-  #       with:
-  #         repo-token: "${{ secrets.GITHUB_TOKEN }}"
-  #         configuration-path: .github/milestone.yml
 
-  milestone:
-    if: github.event.pull_request.milestone == null
-    name: Check PR Milestone
+  check-milestone:
     runs-on: ubuntu-latest
+    
     steps:
-      - name: Check for milestone
-        run: |
-          echo "Pull request has NO milestone"
-          exit 1
+    - name: Verificar Milestone
+      uses: actions/github-script@v4
+      with:
+        script: |
+          const octokit = require("@octokit/rest")();
+          octokit.authenticate({
+            type: "token",
+            token: "${{ secrets.GITHUB_TOKEN }}"
+          });
+          
+          const { data: milestones } = await octokit.issues.listMilestonesForRepo({
+            owner: "${{ github.repository_owner }}",
+            repo: "${{ github.repository }}",
+            state: "open"
+          });
+          
+          if (milestones.length > 0) {
+            console.log("Existe pelo menos uma milestone definida.");
+          } else {
+            console.log("Nenhuma milestone definida.");
+          }
