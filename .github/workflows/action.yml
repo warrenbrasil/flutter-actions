@@ -21,12 +21,12 @@ jobs:
       uses: actions/github-script@v4
       with:
         script: |
-          const github = require("@actions/github");
-          const octokit = github.getOctokit(process.env.GITHUB_TOKEN);
+          const gh = require("@actions/github");
+          const octokit = gh.getOctokit(process.env.GITHUB_TOKEN);
 
           const { data: milestones } = await octokit.rest.issues.listMilestones({
-            owner: "${{ github.context.repo.owner }}",
-            repo: "${{ github.context.repo.repo }}",
+            owner: "${{ github.repository_owner }}",
+            repo: "${{ github.repository }}",
             state: "open"
           });
 
