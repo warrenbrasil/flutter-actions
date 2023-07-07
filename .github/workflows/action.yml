@@ -30,13 +30,13 @@ jobs:
             state: "open"
           })
           .then(({ data: milestones }) => {
-            if (milestones.length > 0) {
+            if (milestones && milestones.length > 0) {
               console.log("Existe pelo menos uma milestone definida.");
             } else {
-              console.log("Nenhuma milestone definida.");
+              console.log("Nenhuma milestone definida ou a funcionalidade de milestones não está habilitada.");
             }
           })
           .catch((error) => {
-            console.error("Ocorreu um erro ao buscar as milestones:", error);
+            console.error("Ocorreu um erro ao buscar as milestones:", error.message);
           });
         EOF
