@@ -14,15 +14,15 @@ jobs:
 
 
   check-milestone:
-    runs-on: ubuntu-latest
+  runs-on: ubuntu-latest
 
     steps:
     - name: Verificar Milestone
       uses: actions/github-script@v4
       with:
         script: |
-          const { github } = require("@actions/github");
-          const octokit = github.getOctokit(process.env.GITHUB_TOKEN);
+          const { getOctokit, context } = require("@actions/github");
+          const octokit = getOctokit(process.env.GITHUB_TOKEN);
 
           const { data: milestones } = await octokit.rest.issues.listMilestones({
             owner: context.repo.owner,
